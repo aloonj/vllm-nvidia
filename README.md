@@ -6,7 +6,7 @@
 
 1. **Run initial setup (first time only):**
    ```bash
-   ./setup.sh
+   ./setup.sh  # Run as normal user, will prompt for sudo password when needed
    ```
 
 2. **Activate the environment:**
