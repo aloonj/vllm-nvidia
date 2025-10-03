@@ -135,45 +135,58 @@ setup_python_environment() {
     log "Setting up Python virtual environment..."
 
     cd "$INSTALL_DIR"
-    
+
+    # Remove existing virtual environment if it exists (in case of re-runs)
+    if [[ -d "vllm-env" ]]; then
+        warn "Existing virtual environment found. Removing and recreating..."
+        rm -rf vllm-env
+    fi
+
     # Create virtual environment
     python3 -m venv vllm-env
+
+    # Activate the virtual environment
     source vllm-env/bin/activate
-    
-    # Upgrade pip
-    pip install --upgrade pip setuptools wheel
-    
+
+    # Verify pip is working before upgrading
+    if ! python -m pip --version &>/dev/null; then
+        error "pip is not working in the virtual environment. Please check your Python installation."
+    fi
+
+    # Upgrade pip using python -m pip to ensure we use the correct pip
+    python -m pip install --upgrade pip setuptools wheel
+
     info "Python environment created at $INSTALL_DIR/vllm-env ✓"
 }
 
 # Install vLLM and dependencies
 install_vllm() {
     log "Installing vLLM and dependencies..."
-    
+
     cd "$INSTALL_DIR"
     source vllm-env/bin/activate
-    
+
     # Detect CUDA version for appropriate PyTorch installation
     if command -v nvcc &> /dev/null; then
         CUDA_VERSION=$(nvcc --version | grep "release" | awk '{print $6}' | cut -c2- | cut -d'.' -f1,2)
         info "Installing for CUDA $CUDA_VERSION"
-        
+
         if [[ "$CUDA_VERSION" == "11.8" ]]; then
-            pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-            pip install vllm --extra-index-url https://download.pytorch.org/whl/cu118
+            python -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+            python -m pip install vllm --extra-index-url https://download.pytorch.org/whl/cu118
         else
             # Default to CUDA 12.1+
-            pip install torch torchvision torchaudio
-            pip install vllm
+            python -m pip install torch torchvision torchaudio
+            python -m pip install vllm
         fi
     else
         # Install latest versions
-        pip install torch torchvision torchaudio
-        pip install vllm
+        python -m pip install torch torchvision torchaudio
+        python -m pip install vllm
     fi
-    
+
     # Install additional dependencies
-    pip install \
+    python -m pip install \
         transformers \
         accelerate \
         huggingface-hub \
@@ -181,10 +194,10 @@ install_vllm() {
         uvicorn \
         pydantic \
         requests
-    
+
     # Install NVIDIA ML Python bindings
-    pip install nvidia-ml-py3
-    
+    python -m pip install nvidia-ml-py3
+
     info "vLLM and dependencies installed ✓"
 }
 

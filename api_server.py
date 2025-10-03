@@ -13,13 +13,16 @@ import os
 DEFAULT_CONFIG = {
     "model": "RedHatAI/gemma-3-27b-it-quantized.w4a16",
     "tensor_parallel_size": 2,
-    "gpu_memory_utilization": 0.85,
-    "max_model_len": 16384,
+    "gpu_memory_utilization": 0.95,
+    "max_model_len": 32768,  # try this first
     "dtype": "bfloat16",
+    "kv_cache_dtype": "fp8",  # KEY ADDITION
     "trust_remote_code": True,
     "disable_custom_all_reduce": True,
-    "max_num_batched_tokens": 8192,
+    "max_num_batched_tokens": 16384,
+    "max_num_seqs": 16,  # reduce if OOM
     "enable_prefix_caching": True,
+    "enable_chunked_prefill": True,
     "port": 8000,
     "host": "0.0.0.0"
 }
