@@ -4,22 +4,27 @@
 
 ## Quick Start
 
-1. **Activate the environment:**
+1. **Run initial setup (first time only):**
+   ```bash
+   ./setup.sh
+   ```
+
+2. **Activate the environment:**
    ```bash
    source activate_vllm.sh
    ```
 
-2. **Check GPU configuration:**
+3. **Check GPU configuration:**
    ```bash
    python multi_gpu_config.py
    ```
 
-3. **Test basic inference:**
+4. **Test basic inference:**
    ```bash
    python basic_inference.py
    ```
 
-4. **Start API server:**
+5. **Start API server:**
    ```bash
    # Default configuration (Gemma-27B)
    python api_server.py
@@ -36,7 +41,7 @@
    python api_server.py --help
    ```
 
-5. **Monitor GPU usage:**
+6. **Monitor GPU usage:**
    ```bash
    python monitor_gpus.py
    ```
