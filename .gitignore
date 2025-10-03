@@ -1,0 +1,150 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+ENV/
+env/
+vllm-env/
+.venv/
+.ENV/
+
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
+*.code-workspace
+.history/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# Environments
+.env
+.envrc
+*.env
+
+# ML/Model files
+*.bin
+*.safetensors
+*.gguf
+*.ggml
+*.pt
+*.pth
+*.pkl
+*.ckpt
+*.h5
+*.hdf5
+*.tar.gz
+models/
+checkpoints/
+weights/
+
+# Hugging Face cache
+.cache/
+huggingface/
+~/.cache/huggingface/
+
+# Logs
+*.log
+logs/
+*.out
+*.err
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+*.swp
+*.swo
+
+# Test coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Documentation
+docs/_build/
+docs/build/
+site/
+
+# Data files
+*.csv
+*.json
+*.parquet
+*.arrow
+data/
+datasets/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# NVIDIA/CUDA
+*.nsys-rep
+*.sqlite
+*.nvvp
+
+# Ray/vLLM specific
+ray_results/
+*.ray
+vllm_workspace/
+
+# Claude-related files
+.claude/
+*.claude
+.claude.md
+CLAUDE.md
