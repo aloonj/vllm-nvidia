@@ -11,18 +11,6 @@ import os
 
 # Default configuration
 DEFAULT_CONFIG = {
-    "model": "RedHatAI/gemma-3-27b-it-quantized.w4a16",
-    "tensor_parallel_size": 2,
-    "gpu_memory_utilization": 0.95,
-    "max_model_len": 32768,  # try this first
-    "dtype": "bfloat16",
-    "kv_cache_dtype": "fp8",  # KEY ADDITION
-    "trust_remote_code": True,
-    "disable_custom_all_reduce": True,
-    "max_num_batched_tokens": 16384,
-    "max_num_seqs": 16,  # reduce if OOM
-    "enable_prefix_caching": True,
-    "enable_chunked_prefill": True,
     "port": 8000,
     "host": "0.0.0.0"
 }
@@ -59,6 +47,15 @@ def launch_vllm_server(config=None):
     if config.get("max_num_batched_tokens"):
         cmd.extend(["--max-num-batched-tokens", str(config["max_num_batched_tokens"])])
 
+    if config.get("max_num_seqs"):
+        cmd.extend(["--max-num-seqs", str(config["max_num_seqs"])])
+
+    if config.get("kv_cache_dtype") and config["kv_cache_dtype"] is not None:
+        cmd.extend(["--kv-cache-dtype", config["kv_cache_dtype"]])
+
+    if config.get("enable_chunked_prefill"):
+        cmd.append("--enable-chunked-prefill")
+
     print("Starting vLLM OpenAI Server with configuration:")
     print("-" * 50)
     for key, value in config.items():
@@ -80,15 +77,15 @@ def main():
     parser = argparse.ArgumentParser(description="Launch vLLM OpenAI-Compatible Server")
 
     # Model configuration
-    parser.add_argument("--model", default=DEFAULT_CONFIG["model"],
+    parser.add_argument("--model", default=None,
                        help="Model to load")
-    parser.add_argument("--tensor-parallel-size", type=int, default=DEFAULT_CONFIG["tensor_parallel_size"],
+    parser.add_argument("--tensor-parallel-size", type=int, default=None,
                        help="Number of GPUs for tensor parallelism")
-    parser.add_argument("--gpu-memory-utilization", type=float, default=DEFAULT_CONFIG["gpu_memory_utilization"],
+    parser.add_argument("--gpu-memory-utilization", type=float, default=None,
                        help="GPU memory utilization (0.0-1.0)")
-    parser.add_argument("--max-model-len", type=int, default=DEFAULT_CONFIG["max_model_len"],
+    parser.add_argument("--max-model-len", type=int, default=None,
                        help="Maximum model context length")
-    parser.add_argument("--dtype", default=DEFAULT_CONFIG["dtype"],
+    parser.add_argument("--dtype", default=None,
                        choices=["float16", "bfloat16", "float32"],
                        help="Model data type")
 
@@ -99,7 +96,7 @@ def main():
                        help="Server host")
 
     # Performance options
-    parser.add_argument("--max-num-batched-tokens", type=int, default=DEFAULT_CONFIG["max_num_batched_tokens"],
+    parser.add_argument("--max-num-batched-tokens", type=int, default=None,
                        help="Maximum number of batched tokens")
 
     # Boolean flags
@@ -111,7 +108,7 @@ def main():
                        help="Disable prefix caching")
 
     # Preset configurations
-    parser.add_argument("--preset", choices=["gemma27b", "gemma12b", "llama13b"],
+    parser.add_argument("--preset", choices=["gemma27b", "gemma12b", "llama13b", "qwen30b"],
                        help="Use preset configuration")
 
     args = parser.parse_args()
@@ -127,35 +124,51 @@ def main():
             "max_model_len": 16384,
             "dtype": "bfloat16"
         })
-    elif args.preset == "gemma12b":
+    elif args.preset == "qwen30b":
         config.update({
-            "model": "google/gemma-2-12b-it",
-            "tensor_parallel_size": 1,
-            "max_model_len": 8192,
-            "dtype": "bfloat16"
-        })
-    elif args.preset == "llama13b":
-        config.update({
-            "model": "meta-llama/Llama-2-13b-chat-hf",
-            "tensor_parallel_size": 2,
-            "max_model_len": 4096,
-            "dtype": "float16"
+            "model": "Qwen/Qwen3-30B-A3B-GPTQ-Int4",  # GPTQ 4-bit (better than FP8 for 3090s)
+            "quantization": "gptq",  # CRITICAL: Specify GPTQ quantization
+            "tensor_parallel_size": 2,  # Use both GPUs
+            "gpu_memory_utilization": 0.95,  # Use 95% of 48GB
+            "max_model_len": 40960,
+            "dtype": "auto",  # Auto-detect precision
+            "kv_cache_dtype": None,  # Disable FP8 KV cache for qwen30b
+            "max_num_batched_tokens": 65536,  # Larger for chunked prefill
+            "max_num_seqs": 4,  # 4 concurrent sequences
+            "enable_prefix_caching": True,  # Cache common prefixes
+            "enable_chunked_prefill": True,  # Process long prompts in chunks
+            "chunked_prefill_size": 8192  # Chunk size for prefill
         })
 
-    # Apply command line arguments
-    config["model"] = args.model
-    config["tensor_parallel_size"] = args.tensor_parallel_size
-    config["gpu_memory_utilization"] = args.gpu_memory_utilization
-    config["max_model_len"] = args.max_model_len
-    config["dtype"] = args.dtype
-    config["port"] = args.port
-    config["host"] = args.host
-    config["max_num_batched_tokens"] = args.max_num_batched_tokens
+    # Only apply command line arguments if they were explicitly provided (not defaults)
+    # Check if argument was actually passed by user
+    import sys
+    provided_args = sys.argv[1:]
+
+    if '--model' in provided_args:
+        config["model"] = args.model
+    if '--tensor-parallel-size' in provided_args:
+        config["tensor_parallel_size"] = args.tensor_parallel_size
+    if '--gpu-memory-utilization' in provided_args:
+        config["gpu_memory_utilization"] = args.gpu_memory_utilization
+    if '--max-model-len' in provided_args:
+        config["max_model_len"] = args.max_model_len
+    if '--dtype' in provided_args:
+        config["dtype"] = args.dtype
+    if '--port' in provided_args:
+        config["port"] = args.port
+    if '--host' in provided_args:
+        config["host"] = args.host
+    if '--max-num-batched-tokens' in provided_args:
+        config["max_num_batched_tokens"] = args.max_num_batched_tokens
 
     # Handle boolean flags
-    config["trust_remote_code"] = not args.no_trust_remote_code
-    config["disable_custom_all_reduce"] = not args.no_disable_custom_all_reduce
-    config["enable_prefix_caching"] = not args.no_prefix_caching
+    if '--no-trust-remote-code' in provided_args:
+        config["trust_remote_code"] = False
+    if '--no-disable-custom-all-reduce' in provided_args:
+        config["disable_custom_all_reduce"] = False
+    if '--no-prefix-caching' in provided_args:
+        config["enable_prefix_caching"] = False
 
     # Launch server
     launch_vllm_server(config)
