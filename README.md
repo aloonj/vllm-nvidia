@@ -1,5 +1,7 @@
 # vLLM NVIDIA - Usage Instructions
 
+![vLLM NVIDIA](docs/images/nvidia-vllm.png)
+
 ## Quick Start
 
 1. **Activate the environment:**
