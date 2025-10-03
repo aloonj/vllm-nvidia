@@ -50,6 +50,44 @@ To reactivate from anywhere:
 source ~/vllm-nvidia/activate_vllm.sh
 ```
 
+## API Configuration
+
+### Quick Configuration via Command Line
+```bash
+# Custom model and settings
+python api_server.py \
+  --model "your-model-name" \
+  --max-model-len 8192 \
+  --tensor-parallel-size 2 \
+  --gpu-memory-utilization 0.9 \
+  --port 8080
+```
+
+### Modifying Default Settings in api_server.py
+
+Edit the `DEFAULT_CONFIG` dictionary at line 13 in `api_server.py`:
+
+```python
+DEFAULT_CONFIG = {
+    "model": "RedHatAI/gemma-3-27b-it-quantized.w4a16",  # Change model here
+    "tensor_parallel_size": 2,        # Number of GPUs to use
+    "gpu_memory_utilization": 0.85,   # GPU memory (0.0-1.0)
+    "max_model_len": 16384,           # Maximum context length
+    "dtype": "bfloat16",              # Data type (float16/bfloat16/float32)
+    "port": 8000,                     # API server port
+    "host": "0.0.0.0",                # API server host
+    "max_num_batched_tokens": 32768   # Max batch size
+}
+```
+
+### Key Parameters
+
+- **model**: HuggingFace model ID or local path
+- **max_model_len**: Maximum context window (reduce if OOM errors)
+- **tensor_parallel_size**: Number of GPUs to split model across
+- **gpu_memory_utilization**: Fraction of GPU memory to use (0.0-1.0)
+- **dtype**: Model precision (bfloat16 recommended for newer GPUs)
+
 ## API Usage
 
 The server is OpenAI-compatible. Start with:
