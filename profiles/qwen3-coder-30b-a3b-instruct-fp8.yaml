@@ -1,0 +1,13 @@
+# Qwen3 Coder 30B Model Profile
+name: qwen3-coder-30b-a3b-instruct-fp8
+description: Qwen3 Coder 30B A3B Instruct model with FP8 precision optimization
+
+model: Qwen/Qwen3-Coder-30B-A3B-Instruct-FP8
+tensor_parallel_size: auto  # Automatically detect and use all GPUs
+gpu_memory_utilization: 0.95
+max_model_len: 40960
+dtype: auto
+max_num_batched_tokens: 65536
+max_num_seqs: 4
+enable_prefix_caching: true
+enable_chunked_prefill: true
