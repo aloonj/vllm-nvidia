@@ -1,6 +1,6 @@
-# Gemma 27B Model Profile
-name: gemma27b
-description: RedHat Gemma 3 27B quantized model configuration
+# RedHat Gemma 3 27B Model Profile
+name: redhat-gemma-3-27b-it-quantized-w4a16
+description: RedHat Gemma 3 27B IT quantized model with W4A16 precision
 
 model: RedHatAI/gemma-3-27b-it-quantized.w4a16
 tensor_parallel_size: auto  # Automatically detect and use all GPUs

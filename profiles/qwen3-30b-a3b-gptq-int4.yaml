@@ -1,6 +1,6 @@
-# Qwen 30B Model Profile
-name: qwen30b
-description: Qwen3 30B GPTQ quantized model optimized for multi-GPU
+# Qwen3 30B Model Profile
+name: qwen3-30b-a3b-gptq-int4
+description: Qwen3 30B A3B model with GPTQ Int4 quantization
 
 model: Qwen/Qwen3-30B-A3B-GPTQ-Int4
 quantization: gptq

@@ -56,14 +56,14 @@ Currently set up for Ubuntu (tested on 24.04).
    python api_server.py --list-profiles
 
    # Use a profile
-   python api_server.py --profile qwen30b
-   python api_server.py --profile gemma27b
+   python api_server.py --profile qwen3-30b-a3b-gptq-int4
+   python api_server.py --profile redhat-gemma-3-27b-it-quantized-w4a16
 
    # Override profile settings
-   python api_server.py --profile gemma27b --port 8080 --max-model-len 8192
+   python api_server.py --profile redhat-gemma-3-27b-it-quantized-w4a16 --port 8080 --max-model-len 8192
 
    # Force specific GPU count
-   python api_server.py --profile qwen30b --tensor-parallel-size 1
+   python api_server.py --profile qwen3-30b-a3b-gptq-int4 --tensor-parallel-size 1
 
    # Manual configuration with auto GPU detection
    python api_server.py \
@@ -100,7 +100,7 @@ The server is OpenAI-compatible. Start with:
 python api_server.py
 
 # Or directly with a profile
-python api_server.py --profile qwen30b
+python api_server.py --profile qwen3-30b-a3b-gptq-int4
 ```
 
 Then test with curl:

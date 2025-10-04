@@ -68,10 +68,10 @@ The server searches for profiles in these directories (in order):
 
 ## Example Profiles
 
-- `gemma27b.yaml` - RedHat Gemma 3 27B quantized model
-- `qwen30b.yaml` - Qwen3 30B GPTQ optimized for multi-GPU
-- `llama13b.yaml` - Standard Llama 2 13B configuration
-- `gemma12b.yaml` - Gemma 2 12B model configuration
+- `redhat-gemma-3-27b-it-quantized-w4a16.yaml` - RedHat Gemma 3 27B IT quantized model with W4A16 precision
+- `qwen3-30b-a3b-gptq-int4.yaml` - Qwen3 30B A3B model with GPTQ Int4 quantization
+- `qwen3-coder-30b-a3b-instruct-fp8.yaml` - Qwen3 Coder 30B A3B Instruct model with FP8 precision optimization
+- `unsloth-qwen3-30b-a3b-thinking-2507-fp8.yaml` - Unsloth Qwen3 30B A3B Thinking model with FP8 precision optimization
 
 ## Auto GPU Detection
 
