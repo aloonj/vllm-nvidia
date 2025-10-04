@@ -19,16 +19,29 @@
 
 4. **Start API server:**
    ```bash
-   # Default configuration (Gemma-27B)
-   python api_server.py
+   # List available profiles
+   python api_server.py --list-profiles
 
-   # Use preset configurations
-   python api_server.py --preset gemma27b  # RedHat Gemma-27B quantized
-   python api_server.py --preset gemma12b  # Google Gemma-12B
-   python api_server.py --preset llama13b  # Meta Llama-13B
+   # Use a profile (auto-detects GPU count)
+   python api_server.py --profile qwen30b
+   python api_server.py --profile gemma27b
 
-   # Custom configuration
-   python api_server.py --model "your-model" --port 8080 --tensor-parallel-size 2
+   # Override profile settings
+   python api_server.py --profile gemma27b --port 8080 --max-model-len 8192
+
+   # Force specific GPU count (override auto-detection)
+   python api_server.py --profile qwen30b --tensor-parallel-size 1
+
+   # Use 'auto' to detect GPUs with manual config
+   python api_server.py \
+     --model "meta-llama/Llama-2-13b-hf" \
+     --tensor-parallel-size auto \
+     --gpu-memory-utilization 0.9 \
+     --max-model-len 4096 \
+     --dtype float16
+
+   # Use custom profile file
+   python api_server.py --profile ~/my-profiles/custom.yaml
 
    # Show all options
    python api_server.py --help
@@ -52,7 +65,8 @@ source /home/ajames/vllm-nvidia/activate_vllm.sh
 
 The server is OpenAI-compatible. Start with:
 ```bash
-python api_server.py
+# Profile required (no built-in defaults)
+python api_server.py --profile qwen30b
 ```
 
 Then test with curl:
@@ -65,6 +79,22 @@ curl -X POST "http://localhost:8000/v1/chat/completions" \
        "max_tokens": 100
      }'
 ```
+
+## Custom Profiles
+
+Create your own model profiles in `profiles/` directory as YAML files:
+
+```yaml
+name: my_model
+description: My custom model configuration
+model: path/to/model
+tensor_parallel_size: 2
+gpu_memory_utilization: 0.95
+max_model_len: 16384
+dtype: bfloat16
+```
+
+See `profiles/README.md` for detailed documentation.
 
 ## Troubleshooting
 

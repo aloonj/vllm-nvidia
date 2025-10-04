@@ -1,0 +1,9 @@
+# Gemma 27B Model Profile
+name: gemma27b
+description: RedHat Gemma 3 27B quantized model configuration
+
+model: RedHatAI/gemma-3-27b-it-quantized.w4a16
+tensor_parallel_size: auto  # Automatically detect and use all GPUs
+gpu_memory_utilization: 0.9
+max_model_len: 16384
+dtype: bfloat16

@@ -1,0 +1,10 @@
+# Gemma 12B Model Profile
+name: gemma12b
+description: Gemma 2 12B model configuration
+
+model: google/gemma-2-12b-it
+tensor_parallel_size: 1
+gpu_memory_utilization: 0.85
+max_model_len: 8192
+dtype: bfloat16
+trust_remote_code: true
