@@ -1,0 +1,13 @@
+# Mistral AI Magistral Small 2509 Model Profile
+name: mistralai-magistral-small-2509
+description: Mistral AI Magistral Small 2509 model
+
+model: mistralai/Magistral-Small-2509
+tensor_parallel_size: auto  # Automatically detect and use all GPUs
+gpu_memory_utilization: 0.9
+max_model_len: 32768
+dtype: auto
+max_num_batched_tokens: 32768
+max_num_seqs: 4
+enable_prefix_caching: true
+enable_chunked_prefill: true
