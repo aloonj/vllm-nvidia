@@ -4,8 +4,8 @@ description: Unsloth Qwen3 30B A3B Thinking model with FP8 precision optimizatio
 
 model: unsloth/Qwen3-30B-A3B-Thinking-2507-FP8
 tensor_parallel_size: auto  # Automatically detect and use all GPUs
-gpu_memory_utilization: 0.95
-max_model_len: 40960
+gpu_memory_utilization: 0.85
+max_model_len: 29472
 dtype: auto
 max_num_batched_tokens: 65536
 max_num_seqs: 4

@@ -2,7 +2,7 @@
 name: quanttrio-qwen3-vl-30b-a3b-instruct-awq
 description: QuantTrio Qwen3-VL 30B A3B Instruct model with AWQ quantization and vision capabilities
 
-model: tclf90/Qwen3-VL-30B-A3B-Instruct-AWQ
+model: QuantTrio/Qwen3-VL-30B-A3B-Instruct-AWQ
 quantization: awq
 tensor_parallel_size: 2
 gpu_memory_utilization: 0.9

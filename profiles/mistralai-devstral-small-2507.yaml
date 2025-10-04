@@ -1,0 +1,20 @@
+# Mistral AI Devstral Small 2507 Model Profile
+name: mistralai-devstral-small-2507
+description: Mistral AI Devstral Small 2507 model optimized for development and coding tasks
+
+model: mistralai/Devstral-Small-2507
+tokenizer_mode: mistral
+reasoning_parser: mistral
+config_format: mistral
+load_format: mistral
+tool_call_parser: mistral
+enable_auto_tool_choice: true
+limit_mm_per_prompt: '{"image":10}'
+tensor_parallel_size: 2
+gpu_memory_utilization: 0.9
+max_model_len: 16384
+dtype: auto
+max_num_batched_tokens: 16384
+max_num_seqs: 4
+enable_prefix_caching: true
+enable_chunked_prefill: true

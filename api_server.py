@@ -191,7 +191,10 @@ def launch_vllm_server(config=None):
         cmd.extend(["--swap-space", str(config["swap_space"])])
 
     if config.get("enable_log_requests") is False:
-        cmd.append("--enable-log-requests=false")
+        cmd.append("--no-enable-log-requests")
+
+    if config.get("cpu_offload_gb"):
+        cmd.extend(["--cpu-offload-gb", str(config["cpu_offload_gb"])])
 
     if config.get("disable_custom_all_reduce"):
         cmd.append("--disable-custom-all-reduce")
