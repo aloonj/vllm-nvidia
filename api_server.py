@@ -163,6 +163,9 @@ def launch_vllm_server(config=None):
     if config.get("quantization"):
         cmd.extend(["--quantization", config["quantization"]])
 
+    if config.get("tokenizer_mode"):
+        cmd.extend(["--tokenizer-mode", config["tokenizer_mode"]])
+
     if config.get("trust_remote_code"):
         cmd.append("--trust-remote-code")
 
@@ -475,6 +478,9 @@ def main():
     parser.add_argument("--dtype", default=None,
                        choices=["float16", "bfloat16", "float32", "auto"],
                        help="Model data type")
+    parser.add_argument("--tokenizer-mode", default=None,
+                       choices=["auto", "custom", "mistral", "slow"],
+                       help="Tokenizer mode (auto, custom, mistral, slow)")
 
     parser.add_argument("--port", type=int, default=DEFAULT_CONFIG["port"],
                        help="Server port")
@@ -553,6 +559,8 @@ def main():
         config["max_model_len"] = args.max_model_len
     if '--dtype' in provided_args:
         config["dtype"] = args.dtype
+    if '--tokenizer-mode' in provided_args:
+        config["tokenizer_mode"] = getattr(args, 'tokenizer_mode')
     if '--port' in provided_args:
         config["port"] = args.port
     if '--host' in provided_args:
