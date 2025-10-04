@@ -1,5 +1,6 @@
 # Unsloth Qwen 30B Model Profile
 name: unsloth-qwen3-30b-a3b-thinking-2507-fp8
+description: Unsloth Qwen3 30B A3B Thinking model with FP8 precision optimization
 
 model: unsloth/Qwen3-30B-A3B-Thinking-2507-FP8
 tensor_parallel_size: auto  # Automatically detect and use all GPUs
