@@ -2,6 +2,8 @@
 
 A Python wrapper around vLLM for running LLM inference on NVIDIA GPUs. Includes an interactive menu for selecting models, automatic GPU detection, and YAML-based configuration profiles.
 
+Currently set up for Ubuntu (tested on 24.04).
+
 ## Features
 
 - Interactive menu for model selection and configuration
