@@ -85,13 +85,11 @@ Currently set up for Ubuntu (tested on 24.04).
    python monitor_gpus.py
    ```
 
-## Environment Location
+## Environment Reactivation
 
-This installation is located at: /home/ajames/vllm-nvidia/
-
-To reactivate from anywhere:
+To reactivate the environment from anywhere:
 ```bash
-source /home/ajames/vllm-nvidia/activate_vllm.sh
+source /path/to/vllm-nvidia/activate_vllm.sh
 ```
 
 ## API Usage
