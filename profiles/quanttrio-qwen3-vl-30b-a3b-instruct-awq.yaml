@@ -1,0 +1,17 @@
+# QuantTrio Qwen3-VL 30B A3B Instruct AWQ Model Profile
+name: quanttrio-qwen3-vl-30b-a3b-instruct-awq
+description: QuantTrio Qwen3-VL 30B A3B Instruct model with AWQ quantization and vision capabilities
+
+model: tclf90/Qwen3-VL-30B-A3B-Instruct-AWQ
+quantization: awq
+tensor_parallel_size: 2
+gpu_memory_utilization: 0.9
+max_model_len: 32768
+max_num_seqs: 8
+swap_space: 4
+trust_remote_code: true
+enable_log_requests: false
+dtype: auto
+max_num_batched_tokens: 32768
+enable_prefix_caching: true
+enable_chunked_prefill: true

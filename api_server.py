@@ -166,8 +166,32 @@ def launch_vllm_server(config=None):
     if config.get("tokenizer_mode"):
         cmd.extend(["--tokenizer-mode", config["tokenizer_mode"]])
 
+    if config.get("reasoning_parser"):
+        cmd.extend(["--reasoning-parser", config["reasoning_parser"]])
+
+    if config.get("config_format"):
+        cmd.extend(["--config-format", config["config_format"]])
+
+    if config.get("load_format"):
+        cmd.extend(["--load-format", config["load_format"]])
+
+    if config.get("tool_call_parser"):
+        cmd.extend(["--tool-call-parser", config["tool_call_parser"]])
+
+    if config.get("enable_auto_tool_choice"):
+        cmd.append("--enable-auto-tool-choice")
+
+    if config.get("limit_mm_per_prompt"):
+        cmd.extend(["--limit-mm-per-prompt", str(config["limit_mm_per_prompt"])])
+
     if config.get("trust_remote_code"):
         cmd.append("--trust-remote-code")
+
+    if config.get("swap_space"):
+        cmd.extend(["--swap-space", str(config["swap_space"])])
+
+    if config.get("enable_log_requests") is False:
+        cmd.append("--enable-log-requests=false")
 
     if config.get("disable_custom_all_reduce"):
         cmd.append("--disable-custom-all-reduce")
