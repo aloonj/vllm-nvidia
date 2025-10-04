@@ -1,5 +1,21 @@
 # vLLM Setup - Usage Instructions
 
+## Interactive Menu
+
+The easiest way to get started is with the interactive menu:
+
+```bash
+python api_server.py
+```
+
+![Interactive Menu](docs/images/menu.png)
+
+The menu provides:
+- **Profile Selection** - Choose from pre-configured models with auto GPU detection
+- **Profile Creation** - Step-by-step wizard to create custom profiles
+- **Manual Configuration** - One-time setup without saving
+- **Profile Management** - List and manage existing profiles
+
 ## Quick Start
 
 1. **Activate the environment:**
@@ -18,6 +34,14 @@
    ```
 
 4. **Start API server:**
+
+   **🎯 Recommended: Interactive Menu**
+   ```bash
+   # Launch interactive menu (easiest!)
+   python api_server.py
+   ```
+
+   **⚡ Command Line Interface**
    ```bash
    # List available profiles
    python api_server.py --list-profiles
@@ -65,7 +89,10 @@ source /home/ajames/vllm-nvidia/activate_vllm.sh
 
 The server is OpenAI-compatible. Start with:
 ```bash
-# Profile required (no built-in defaults)
+# Interactive menu (recommended)
+python api_server.py
+
+# Or directly with a profile
 python api_server.py --profile qwen30b
 ```
 
