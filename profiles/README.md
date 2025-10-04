@@ -6,22 +6,22 @@ This directory contains YAML configuration profiles for the vLLM API server. Pro
 
 ### List available profiles:
 ```bash
-python api_server_v2.py --list-profiles
+python api_server.py --list-profiles
 ```
 
 ### Use a profile:
 ```bash
-python api_server_v2.py --profile qwen30b
+python api_server.py --profile qwen30b
 ```
 
 ### Use a custom profile file:
 ```bash
-python api_server_v2.py --profile /path/to/custom.yaml
+python api_server.py --profile /path/to/custom.yaml
 ```
 
 ### Override profile settings:
 ```bash
-python api_server_v2.py --profile gemma27b --port 8080 --max-model-len 8192
+python api_server.py --profile gemma27b --port 8080 --max-model-len 8192
 ```
 
 ## Profile Format
@@ -45,7 +45,6 @@ quantization: gptq
 trust_remote_code: true
 enable_prefix_caching: true
 enable_chunked_prefill: true
-chunked_prefill_size: 8192
 max_num_batched_tokens: 65536
 max_num_seqs: 4
 kv_cache_dtype: fp8
@@ -65,12 +64,12 @@ The server searches for profiles in these directories (in order):
 1. Copy an existing profile as a template
 2. Modify the settings for your model and hardware
 3. Save with a descriptive name (e.g., `my_model.yaml`)
-4. Test with `python api_server_v2.py --profile my_model`
+4. Test with `python api_server.py --profile my_model`
 
 ## Example Profiles
 
 - `gemma27b.yaml` - RedHat Gemma 3 27B quantized model
-- `qwen30b.yaml` - Qwen3 30B GPTQ optimized for dual 3090s
+- `qwen30b.yaml` - Qwen3 30B GPTQ optimized for multi-GPU
 - `llama13b.yaml` - Standard Llama 2 13B configuration
 - `gemma12b.yaml` - Gemma 2 12B model configuration
 

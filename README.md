@@ -88,7 +88,7 @@ Create your own model profiles in `profiles/` directory as YAML files:
 name: my_model
 description: My custom model configuration
 model: path/to/model
-tensor_parallel_size: 2
+tensor_parallel_size: auto  # Auto-detect GPUs (or use a number like 2)
 gpu_memory_utilization: 0.95
 max_model_len: 16384
 dtype: bfloat16
