@@ -1,16 +1,15 @@
 # vLLM NVIDIA Server
 
-A user-friendly wrapper for running high-performance LLM inference with vLLM on NVIDIA GPUs. Features an interactive menu system, automatic GPU detection, and profile-based configuration for easy model deployment.
+A Python wrapper around vLLM for running LLM inference on NVIDIA GPUs. Includes an interactive menu for selecting models, automatic GPU detection, and YAML-based configuration profiles.
 
-## Key Features
+## Features
 
-- 🎯 **Interactive Menu** - User-friendly interface for model selection and configuration
-- 🚀 **Auto GPU Detection** - Automatically detects and utilizes available GPUs
-- 📋 **Profile System** - Pre-configured profiles for popular models (Qwen, Gemma, LLaMA)
-- ⚙️ **Easy Configuration** - Step-by-step wizards for custom model setup
-- 🔧 **Professional CLI** - Full command-line interface for power users
-- 💾 **Persistent Profiles** - Save and share model configurations
-- 🌐 **OpenAI Compatible** - Drop-in replacement for OpenAI API
+- Interactive menu for model selection and configuration
+- Automatic GPU count detection and tensor parallelism setup
+- YAML configuration profiles for common models (Qwen, Gemma, LLaMA)
+- Interactive setup for creating custom model configurations
+- Full CLI support with all vLLM parameters
+- OpenAI-compatible API server
 
 ## Quick Start
 
@@ -36,36 +35,35 @@ A user-friendly wrapper for running high-performance LLM inference with vLLM on 
 
 5. **Start API server:**
 
-   **🎯 Recommended: Interactive Menu**
+   **Interactive Menu**
    ```bash
-   # Launch interactive menu (easiest!)
    python api_server.py
    ```
 
    ![Interactive Menu](docs/images/menu.png)
 
    The menu provides:
-   - **Profile Selection** - Choose from pre-configured models with auto GPU detection
-   - **Profile Creation** - Step-by-step wizard to create custom profiles
-   - **Manual Configuration** - One-time setup without saving
-   - **Profile Management** - List and manage existing profiles
+   - Profile selection with automatic GPU detection
+   - Interactive profile creation
+   - One-time manual configuration
+   - Profile listing and management
 
-   **⚡ Command Line Interface**
+   **Command Line Interface**
    ```bash
    # List available profiles
    python api_server.py --list-profiles
 
-   # Use a profile (auto-detects GPU count)
+   # Use a profile
    python api_server.py --profile qwen30b
    python api_server.py --profile gemma27b
 
    # Override profile settings
    python api_server.py --profile gemma27b --port 8080 --max-model-len 8192
 
-   # Force specific GPU count (override auto-detection)
+   # Force specific GPU count
    python api_server.py --profile qwen30b --tensor-parallel-size 1
 
-   # Use 'auto' to detect GPUs with manual config
+   # Manual configuration with auto GPU detection
    python api_server.py \
      --model "meta-llama/Llama-2-13b-hf" \
      --tensor-parallel-size auto \
@@ -98,7 +96,7 @@ source /home/ajames/vllm-nvidia/activate_vllm.sh
 
 The server is OpenAI-compatible. Start with:
 ```bash
-# Interactive menu (recommended)
+# Interactive menu
 python api_server.py
 
 # Or directly with a profile
@@ -124,7 +122,7 @@ Create your own model profiles in `profiles/` directory as YAML files:
 name: my_model
 description: My custom model configuration
 model: path/to/model
-tensor_parallel_size: auto  # Auto-detect GPUs (or use a number like 2)
+tensor_parallel_size: auto  # or use a number like 2
 gpu_memory_utilization: 0.95
 max_model_len: 16384
 dtype: bfloat16
