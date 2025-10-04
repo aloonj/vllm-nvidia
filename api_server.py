@@ -226,7 +226,7 @@ def show_interactive_menu():
 
     # Add profile entries
     for name, info in profiles.items():
-        entry = f"{name:15} - {info['description']}"
+        entry = name
         menu_entries.append(entry)
         profile_map[entry] = name
 
