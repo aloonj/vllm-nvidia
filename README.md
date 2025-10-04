@@ -1,4 +1,16 @@
-# vLLM Setup - Usage Instructions
+# vLLM NVIDIA Server
+
+A user-friendly wrapper for running high-performance LLM inference with vLLM on NVIDIA GPUs. Features an interactive menu system, automatic GPU detection, and profile-based configuration for easy model deployment.
+
+## Key Features
+
+- 🎯 **Interactive Menu** - User-friendly interface for model selection and configuration
+- 🚀 **Auto GPU Detection** - Automatically detects and utilizes available GPUs
+- 📋 **Profile System** - Pre-configured profiles for popular models (Qwen, Gemma, LLaMA)
+- ⚙️ **Easy Configuration** - Step-by-step wizards for custom model setup
+- 🔧 **Professional CLI** - Full command-line interface for power users
+- 💾 **Persistent Profiles** - Save and share model configurations
+- 🌐 **OpenAI Compatible** - Drop-in replacement for OpenAI API
 
 ## Quick Start
 
