@@ -11,6 +11,13 @@ import os
 import yaml
 from pathlib import Path
 
+# Try to import simple_term_menu for interactive menu
+try:
+    from simple_term_menu import TerminalMenu
+    MENU_AVAILABLE = True
+except ImportError:
+    MENU_AVAILABLE = False
+
 DEFAULT_CONFIG = {
     "port": 8000,
     "host": "0.0.0.0"
@@ -194,6 +201,267 @@ def launch_vllm_server(config=None):
         print(f"Error starting server: {e}")
         sys.exit(1)
 
+def show_interactive_menu():
+    """Show interactive menu for profile selection and configuration"""
+
+    # Get available profiles
+    profiles = list_profiles()
+    gpu_count = detect_gpu_count()
+
+    print("\n" + "="*50)
+    print("vLLM Server Configuration")
+    print("="*50)
+    print(f"Detected {gpu_count} GPU(s) available\n")
+
+    if not profiles and not MENU_AVAILABLE:
+        print("No profiles found and interactive menu not available.")
+        print("Install simple-term-menu for better experience:")
+        print("  pip install simple-term-menu")
+        print("\nCreate profiles in ./profiles/ or use command line arguments.")
+        sys.exit(1)
+
+    # Build menu options
+    menu_entries = []
+    profile_map = {}
+
+    # Add profile entries
+    for name, info in profiles.items():
+        entry = f"{name:15} - {info['description']}"
+        menu_entries.append(entry)
+        profile_map[entry] = name
+
+    if menu_entries:
+        menu_entries.append("─" * 40)
+
+    # Add action entries
+    menu_entries.extend([
+        "[Create new profile]",
+        "[Manual configuration]",
+        "[List profiles]",
+        "[Exit]"
+    ])
+
+    if MENU_AVAILABLE:
+        # Use interactive menu with arrow keys
+        terminal_menu = TerminalMenu(
+            menu_entries,
+            title="Select a profile or action:",
+        )
+        menu_index = terminal_menu.show()
+
+        if menu_index is None:  # User pressed ESC or Ctrl-C
+            print("\nCancelled.")
+            sys.exit(0)
+
+        selected = menu_entries[menu_index]
+    else:
+        # Fallback to numbered menu
+        print("Select a profile or action:")
+        for i, entry in enumerate(menu_entries, 1):
+            if entry.startswith("─"):
+                print(entry)
+            else:
+                print(f"{i:2}. {entry}")
+
+        try:
+            choice = input("\nEnter choice (number): ").strip()
+            if not choice:
+                print("\nCancelled.")
+                sys.exit(0)
+
+            index = int(choice) - 1
+            if index < 0 or index >= len(menu_entries):
+                print("Invalid choice.")
+                sys.exit(1)
+
+            selected = menu_entries[index]
+        except (ValueError, KeyboardInterrupt):
+            print("\nCancelled.")
+            sys.exit(0)
+
+    # Process selection
+    if selected in profile_map:
+        # Run selected profile
+        profile_name = profile_map[selected]
+        print(f"\nLaunching profile: {profile_name}")
+        profile_path = profiles[profile_name]['path']
+        config = load_profile(profile_path)
+        launch_vllm_server(config)
+
+    elif selected == "[Create new profile]":
+        create_profile_wizard()
+
+    elif selected == "[Manual configuration]":
+        manual_configuration_wizard()
+
+    elif selected == "[List profiles]":
+        if profiles:
+            print("\nAvailable profiles:")
+            print("-" * 50)
+            for name, info in profiles.items():
+                print(f"{name:15} - {info['description']}")
+                print(f"{'':15}   Path: {info['path']}")
+        else:
+            print("\nNo profiles found.")
+        print("\nPress Enter to continue...")
+        input()
+        show_interactive_menu()
+
+    elif selected == "[Exit]":
+        print("\nExiting.")
+        sys.exit(0)
+    else:
+        # Separator line selected, show menu again
+        show_interactive_menu()
+
+def create_profile_wizard():
+    """Interactive wizard to create a new profile"""
+    print("\n" + "="*50)
+    print("Create New Profile")
+    print("="*50)
+
+    gpu_count = detect_gpu_count()
+
+    try:
+        # Get profile name
+        name = input("\nProfile name (e.g., my_model): ").strip()
+        if not name:
+            print("Profile name required.")
+            return
+
+        # Get description
+        description = input("Description: ").strip()
+
+        # Get model
+        model = input("Model path or HuggingFace ID: ").strip()
+        if not model:
+            print("Model required.")
+            return
+
+        # Get tensor parallel size
+        print(f"\nTensor parallel size (detected {gpu_count} GPUs)")
+        tp_input = input(f"Enter number or 'auto' [auto]: ").strip()
+        tensor_parallel_size = tp_input if tp_input else "auto"
+
+        # Get GPU memory utilization
+        gpu_mem = input("GPU memory utilization (0.0-1.0) [0.9]: ").strip()
+        gpu_memory_utilization = float(gpu_mem) if gpu_mem else 0.9
+
+        # Get max model length
+        max_len = input("Max model length [16384]: ").strip()
+        max_model_len = int(max_len) if max_len else 16384
+
+        # Get dtype
+        print("\nData type options: auto, float16, bfloat16, float32")
+        dtype = input("Data type [auto]: ").strip() or "auto"
+
+        # Ask about optional settings
+        use_advanced = input("\nConfigure advanced settings? (y/N): ").strip().lower()
+
+        profile_config = {
+            "name": name,
+            "description": description,
+            "model": model,
+            "tensor_parallel_size": tensor_parallel_size,
+            "gpu_memory_utilization": gpu_memory_utilization,
+            "max_model_len": max_model_len,
+            "dtype": dtype
+        }
+
+        if use_advanced == 'y':
+            # Quantization
+            quant = input("Quantization method (e.g., gptq, awq) [none]: ").strip()
+            if quant and quant != "none":
+                profile_config["quantization"] = quant
+
+            # Trust remote code
+            trust = input("Trust remote code? (y/N): ").strip().lower()
+            if trust == 'y':
+                profile_config["trust_remote_code"] = True
+
+            # Prefix caching
+            prefix = input("Enable prefix caching? (Y/n): ").strip().lower()
+            if prefix != 'n':
+                profile_config["enable_prefix_caching"] = True
+
+        # Save profile
+        profile_dir = Path.cwd() / "profiles"
+        profile_dir.mkdir(exist_ok=True)
+
+        profile_path = profile_dir / f"{name}.yaml"
+
+        if profile_path.exists():
+            overwrite = input(f"\nProfile {name}.yaml already exists. Overwrite? (y/N): ").strip().lower()
+            if overwrite != 'y':
+                print("Cancelled.")
+                return
+
+        with open(profile_path, 'w') as f:
+            yaml.dump(profile_config, f, default_flow_style=False, sort_keys=False)
+
+        print(f"\nProfile saved to: {profile_path}")
+
+        # Ask to launch
+        launch = input("\nLaunch server with this profile? (Y/n): ").strip().lower()
+        if launch != 'n':
+            launch_vllm_server(profile_config)
+
+    except (KeyboardInterrupt, EOFError):
+        print("\n\nCancelled.")
+
+def manual_configuration_wizard():
+    """Interactive wizard for manual configuration"""
+    print("\n" + "="*50)
+    print("Manual Configuration")
+    print("="*50)
+
+    gpu_count = detect_gpu_count()
+
+    try:
+        # Required fields
+        model = input("\nModel path or HuggingFace ID: ").strip()
+        if not model:
+            print("Model required.")
+            return
+
+        print(f"\nTensor parallel size (detected {gpu_count} GPUs)")
+        tp_input = input(f"Enter number or 'auto' [{gpu_count}]: ").strip()
+        tensor_parallel_size = tp_input if tp_input else str(gpu_count)
+
+        gpu_mem = input("GPU memory utilization (0.0-1.0) [0.9]: ").strip()
+        gpu_memory_utilization = float(gpu_mem) if gpu_mem else 0.9
+
+        max_len = input("Max model length [16384]: ").strip()
+        max_model_len = int(max_len) if max_len else 16384
+
+        print("\nData type options: auto, float16, bfloat16, float32")
+        dtype = input("Data type [auto]: ").strip() or "auto"
+
+        config = {
+            "model": model,
+            "tensor_parallel_size": tensor_parallel_size,
+            "gpu_memory_utilization": gpu_memory_utilization,
+            "max_model_len": max_model_len,
+            "dtype": dtype,
+            "port": DEFAULT_CONFIG["port"],
+            "host": DEFAULT_CONFIG["host"]
+        }
+
+        print("\nStarting server with configuration:")
+        print("-" * 40)
+        for key, value in config.items():
+            print(f"{key}: {value}")
+        print("-" * 40)
+
+        confirm = input("\nProceed? (Y/n): ").strip().lower()
+        if confirm != 'n':
+            launch_vllm_server(config)
+        else:
+            print("Cancelled.")
+
+    except (KeyboardInterrupt, EOFError):
+        print("\n\nCancelled.")
+
 def main():
     parser = argparse.ArgumentParser(description="Launch vLLM OpenAI-Compatible Server")
 
@@ -229,6 +497,11 @@ def main():
                        help="List all available profiles")
 
     args = parser.parse_args()
+
+    # Check if no arguments provided - show interactive menu
+    if len(sys.argv) == 1:
+        show_interactive_menu()
+        return
 
     if args.list_profiles:
         profiles = list_profiles()
