@@ -1,45 +1,42 @@
 # vLLM Setup - Usage Instructions
 
-## Interactive Menu
-
-The easiest way to get started is with the interactive menu:
-
-```bash
-python api_server.py
-```
-
-![Interactive Menu](docs/images/menu.png)
-
-The menu provides:
-- **Profile Selection** - Choose from pre-configured models with auto GPU detection
-- **Profile Creation** - Step-by-step wizard to create custom profiles
-- **Manual Configuration** - One-time setup without saving
-- **Profile Management** - List and manage existing profiles
-
 ## Quick Start
 
-1. **Activate the environment:**
+1. **Run the setup script:**
+   ```bash
+   ./setup.sh
+   ```
+
+2. **Activate the environment:**
    ```bash
    source activate_vllm.sh
    ```
 
-2. **Check GPU configuration:**
+3. **Check GPU configuration:**
    ```bash
    python multi_gpu_config.py
    ```
 
-3. **Test basic inference:**
+4. **Test basic inference:**
    ```bash
    python basic_inference.py
    ```
 
-4. **Start API server:**
+5. **Start API server:**
 
    **🎯 Recommended: Interactive Menu**
    ```bash
    # Launch interactive menu (easiest!)
    python api_server.py
    ```
+
+   ![Interactive Menu](docs/images/menu.png)
+
+   The menu provides:
+   - **Profile Selection** - Choose from pre-configured models with auto GPU detection
+   - **Profile Creation** - Step-by-step wizard to create custom profiles
+   - **Manual Configuration** - One-time setup without saving
+   - **Profile Management** - List and manage existing profiles
 
    **⚡ Command Line Interface**
    ```bash
@@ -71,7 +68,7 @@ The menu provides:
    python api_server.py --help
    ```
 
-5. **Monitor GPU usage:**
+6. **Monitor GPU usage:**
    ```bash
    python monitor_gpus.py
    ```
