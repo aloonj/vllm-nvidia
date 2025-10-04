@@ -1,5 +1,5 @@
 # Unsloth Qwen 30B Model Profile
-name: unsloth-qwen30b-2507-fp8
+name: unsloth-qwen3-30b-a3b-thinking-2507-fp8
 
 model: unsloth/Qwen3-30B-A3B-Thinking-2507-FP8
 tensor_parallel_size: auto  # Automatically detect and use all GPUs
