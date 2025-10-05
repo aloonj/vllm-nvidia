@@ -10,6 +10,9 @@ import argparse
 import os
 import yaml
 from pathlib import Path
+import json
+import urllib.request
+import ssl
 
 # Try to import simple_term_menu for interactive menu
 try:
@@ -22,6 +25,28 @@ DEFAULT_CONFIG = {
     "port": 8000,
     "host": "0.0.0.0"
 }
+
+def check_vllm_version():
+    """Check for newer vLLM versions and return version info"""
+    try:
+        # Get current version
+        import vllm
+        current_version = vllm.__version__
+
+        # Check PyPI for latest version (with timeout and SSL context)
+        ctx = ssl.create_default_context()
+        with urllib.request.urlopen('https://pypi.org/pypi/vllm/json', timeout=3, context=ctx) as response:
+            data = json.loads(response.read().decode())
+            latest_version = data['info']['version']
+
+        return {
+            'current': current_version,
+            'latest': latest_version,
+            'update_available': current_version != latest_version
+        }
+    except Exception:
+        # Silently fail if version check fails (network issues, etc.)
+        return None
 
 def detect_gpu_count():
     """Detect the number of available GPUs"""
@@ -238,10 +263,21 @@ def show_interactive_menu():
     profiles = list_profiles()
     gpu_count = detect_gpu_count()
 
+    # Check for vLLM version updates
+    version_info = check_vllm_version()
+
     print("\n" + "="*50)
     print("vLLM Server Configuration")
     print("="*50)
-    print(f"Detected {gpu_count} GPU(s) available\n")
+    print(f"🎮 Detected {gpu_count} GPU(s) available")
+
+    if version_info:
+        if version_info['update_available']:
+            print(f"📦 vLLM {version_info['current']} → {version_info['latest']} available")
+            print("   Run: pip install --upgrade vllm")
+        else:
+            print(f"✓ vLLM {version_info['current']} (latest)")
+    print()
 
     if not profiles and not MENU_AVAILABLE:
         print("No profiles found and interactive menu not available.")
