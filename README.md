@@ -181,6 +181,8 @@ The tool:
 
 ## Pre-download Tool
 
+![Pre-download Tool](docs/predownload.png)
+
 For models that vLLM thinks won't fit but you want to try anyway:
 
 ```bash
@@ -196,8 +198,6 @@ python predownload.py --all
 # Force re-download
 python predownload.py --model some/model --force
 ```
-
-![Pre-download Tool](docs/predownload.png)
 
 This bypasses vLLM's memory estimation and downloads models directly from HuggingFace.
 
