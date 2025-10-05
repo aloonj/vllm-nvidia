@@ -5,7 +5,7 @@ description: Qwen3 30B A3B model with GPTQ Int4 quantization
 model: Qwen/Qwen3-30B-A3B-GPTQ-Int4
 quantization: gptq
 tensor_parallel_size: auto  # Automatically detect and use all GPUs
-gpu_memory_utilization: 0.85
+gpu_memory_utilization: 0.9
 max_model_len: 24576
 dtype: auto
 max_num_batched_tokens: 65536
