@@ -153,7 +153,7 @@ See `profiles/README.md` for detailed documentation.
 
 ## vRAM Estimation Tool
 
-![vRAM Estimator](docs/estimator.png)
+![vRAM Estimator](docs/images/estimator.png)
 
 The included `estimate_vram.py` tool helps predict memory requirements before downloading models:
 
@@ -183,7 +183,7 @@ The tool:
 
 ## Pre-download Tool
 
-![Pre-download Tool](docs/predownload.png)
+![Pre-download Tool](docs/images/predownload.png)
 
 For models that vLLM thinks won't fit but you want to try anyway:
 
