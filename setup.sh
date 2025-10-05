@@ -208,7 +208,7 @@ verify_config_files() {
     cd "$INSTALL_DIR"
 
     # Check if required Python files exist
-    local required_files=("multi_gpu_config.py" "basic_inference.py" "api_server.py" "monitor_gpus.py" "activate_vllm.sh")
+    local required_files=("multi_gpu_config.py" "basic_inference.py" "api_server.py" "monitor_gpus.py" "estimate_vram.py" "activate_vllm.sh")
 
     for file in "${required_files[@]}"; do
         if [[ ! -f "$file" ]]; then
@@ -308,12 +308,17 @@ create_usage_instructions() {
    python multi_gpu_config.py
    \`\`\`
 
-3. **Test basic inference:**
+3. **Estimate vRAM requirements:**
+   \`\`\`bash
+   python estimate_vram.py
+   \`\`\`
+
+4. **Test basic inference:**
    \`\`\`bash
    python basic_inference.py
    \`\`\`
 
-4. **Start API server:**
+5. **Start API server:**
    \`\`\`bash
    # Default configuration (Gemma-27B)
    python api_server.py
@@ -330,7 +335,7 @@ create_usage_instructions() {
    python api_server.py --help
    \`\`\`
 
-5. **Monitor GPU usage:**
+6. **Monitor GPU usage:**
    \`\`\`bash
    python monitor_gpus.py
    \`\`\`
@@ -396,7 +401,8 @@ main() {
     info "Next steps:"
     echo "1. source activate_vllm.sh"
     echo "2. python multi_gpu_config.py"
-    echo "3. python basic_inference.py"
+    echo "3. python estimate_vram.py"
+    echo "4. python basic_inference.py"
     echo
     info "For detailed instructions, see: $INSTALL_DIR/README.md"
     echo

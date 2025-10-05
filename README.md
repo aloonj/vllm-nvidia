@@ -10,6 +10,7 @@ Currently set up for Ubuntu (tested on 24.04).
 - Automatic GPU count detection and tensor parallelism setup
 - YAML configuration profiles for common models (Qwen, Gemma, LLaMA)
 - Interactive setup for creating custom model configurations
+- **vRAM requirement estimation** - predict memory usage before downloading models
 - Full CLI support with all vLLM parameters
 - OpenAI-compatible API server
 
@@ -30,12 +31,17 @@ Currently set up for Ubuntu (tested on 24.04).
    python multi_gpu_config.py
    ```
 
-4. **Test basic inference:**
+4. **Estimate vRAM requirements:**
+   ```bash
+   python estimate_vram.py
+   ```
+
+5. **Test basic inference:**
    ```bash
    python basic_inference.py
    ```
 
-5. **Start API server:**
+6. **Start API server:**
 
    **Interactive Menu**
    ```bash
@@ -80,7 +86,7 @@ Currently set up for Ubuntu (tested on 24.04).
    python api_server.py --help
    ```
 
-6. **Monitor GPU usage:**
+7. **Monitor GPU usage:**
    ```bash
    python monitor_gpus.py
    ```
@@ -129,6 +135,34 @@ dtype: bfloat16
 ```
 
 See `profiles/README.md` for detailed documentation.
+
+## vRAM Estimation Tool
+
+The included `estimate_vram.py` tool helps predict memory requirements before downloading models:
+
+```bash
+# Analyze all model profiles
+python estimate_vram.py
+
+# Show memory requirements per GPU instead of total
+python estimate_vram.py --per-gpu
+
+# Get optimization suggestions for models that don't fit
+python estimate_vram.py --suggest
+
+# Analyze a specific profile
+python estimate_vram.py --profile qwen3-30b-a3b-gptq-int4
+
+# Show verbose breakdown
+python estimate_vram.py --verbose
+```
+
+The tool:
+- Fetches actual model sizes from HuggingFace API
+- Estimates KV cache and activation memory
+- Shows which models will fit in your available vRAM
+- Explains why some models fail to download
+- Provides optimization suggestions
 
 ## Troubleshooting
 
