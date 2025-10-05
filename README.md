@@ -86,7 +86,22 @@ Currently set up for Ubuntu (tested on 24.04).
    python api_server.py --help
    ```
 
-7. **Monitor GPU usage:**
+7. **Pre-download models (optional):**
+   ```bash
+   # List all models from profiles
+   python predownload.py --list
+
+   # Download specific model (bypasses vLLM memory checks)
+   python predownload.py --model mistralai/Magistral-Small-2509
+
+   # Download from profile
+   python predownload.py --profile qwen3-30b-a3b-gptq-int4
+
+   # Download all profile models
+   python predownload.py --all
+   ```
+
+8. **Monitor GPU usage:**
    ```bash
    python monitor_gpus.py
    ```
@@ -163,6 +178,23 @@ The tool:
 - Shows which models will fit in your available vRAM
 - Explains why some models fail to download
 - Provides optimization suggestions
+
+## Pre-download Tool
+
+For models that vLLM thinks won't fit but you want to try anyway:
+
+```bash
+# Download without vLLM's memory checks
+python predownload.py --model mistralai/Magistral-Small-2509
+
+# Download all models from profiles
+python predownload.py --all
+
+# Force re-download
+python predownload.py --model some/model --force
+```
+
+This bypasses vLLM's memory estimation and downloads models directly from HuggingFace.
 
 ## Troubleshooting
 

@@ -208,7 +208,7 @@ verify_config_files() {
     cd "$INSTALL_DIR"
 
     # Check if required Python files exist
-    local required_files=("multi_gpu_config.py" "basic_inference.py" "api_server.py" "monitor_gpus.py" "estimate_vram.py" "activate_vllm.sh")
+    local required_files=("multi_gpu_config.py" "basic_inference.py" "api_server.py" "monitor_gpus.py" "estimate_vram.py" "predownload.py" "activate_vllm.sh")
 
     for file in "${required_files[@]}"; do
         if [[ ! -f "$file" ]]; then
