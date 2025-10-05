@@ -137,14 +137,14 @@ def show_profile_models():
         return
 
     print("\n📋 Available models from profiles:")
-    print("=" * 95)
-    print(f"{'#':<3} {'Profile':<35} {'Model ID':<35} {'Size':<8} {'Status'}")
-    print("-" * 95)
+    print("=" * 75)
+    print(f"{'#':<3} {'Model ID':<50} {'Size':<8} {'Status'}")
+    print("-" * 75)
 
     for i, (profile_name, model_id) in enumerate(models, 1):
         status, size = check_download_status(model_id)
-        print(f"{i:2d}. {profile_name:<35} {model_id:<35} {size:<8} {status}")
-    print("=" * 95)
+        print(f"{i:2d}. {model_id:<50} {size:<8} {status}")
+    print("=" * 75)
 
 def main():
     parser = argparse.ArgumentParser(
