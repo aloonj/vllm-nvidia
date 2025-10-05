@@ -49,15 +49,19 @@ def download_model(model_id: str, force: bool = False, token: Optional[str] = No
     print(f"\n🔄 Downloading {model_id}...")
 
     try:
-        # Check if already downloaded
-        cache_dir = Path.home() / '.cache' / 'huggingface' / 'hub' / f'models--{model_id.replace("/", "--")}'
+        # Check if already downloaded (unless forcing)
+        if not force:
+            status, size = check_download_status(model_id)
+            if status == "✅ Downloaded":
+                print(f"✅ {model_id} already downloaded ({size})")
+                return True
+            elif status in ["⚠️ Incomplete", "⚠️ Partial"]:
+                print(f"⚠️ {model_id} partially downloaded ({size}), completing download...")
 
-        if cache_dir.exists() and not force:
-            print(f"✅ {model_id} already cached at {cache_dir}")
-            return True
-
-        if force and cache_dir.exists():
-            print(f"🔄 Force re-downloading {model_id}...")
+        if force:
+            cache_dir = Path.home() / '.cache' / 'huggingface' / 'hub' / f'models--{model_id.replace("/", "--")}'
+            if cache_dir.exists():
+                print(f"🔄 Force re-downloading {model_id}...")
 
         # Download with progress
         start_time = time.time()
@@ -87,6 +91,43 @@ def download_model(model_id: str, force: bool = False, token: Optional[str] = No
         print(f"❌ Failed to download {model_id}: {e}")
         return False
 
+def check_download_status(model_id: str) -> tuple:
+    """Check if model is fully downloaded by looking for main model files."""
+    cache_dir = Path.home() / '.cache' / 'huggingface' / 'hub' / f'models--{model_id.replace("/", "--")}'
+
+    if not cache_dir.exists():
+        return "📥 Not downloaded", "0GB"
+
+    # Look for model files in snapshots
+    model_files = []
+    for pattern in ['*.safetensors', '*.bin', '*.pt', '*.pth']:
+        model_files.extend(list(cache_dir.glob(f'snapshots/*/{pattern}')))
+
+    if not model_files:
+        return "⚠️ Incomplete", "0GB"
+
+    # Calculate total size of model files
+    total_size = 0
+    for file_path in model_files:
+        if file_path.is_file():
+            try:
+                # Resolve symlinks and get actual file size
+                real_path = file_path.resolve()
+                size = real_path.stat().st_size
+                if size > 100 * 1024 * 1024:  # Only count files > 100MB
+                    total_size += size
+            except:
+                continue
+
+    size_gb = total_size / (1024**3)
+
+    if size_gb < 1:
+        return "⚠️ Incomplete", f"{size_gb*1024:.0f}MB"
+    elif size_gb < 5:  # Likely incomplete for large models
+        return "⚠️ Partial", f"{size_gb:.1f}GB"
+    else:
+        return "✅ Downloaded", f"{size_gb:.1f}GB"
+
 def show_profile_models():
     """Show all models from profiles."""
     models = get_profile_models()
@@ -96,14 +137,14 @@ def show_profile_models():
         return
 
     print("\n📋 Available models from profiles:")
-    print("=" * 80)
-    for i, (profile_name, model_id) in enumerate(models, 1):
-        # Check if already downloaded
-        cache_dir = Path.home() / '.cache' / 'huggingface' / 'hub' / f'models--{model_id.replace("/", "--")}'
-        status = "✅ Downloaded" if cache_dir.exists() else "📥 Not downloaded"
+    print("=" * 95)
+    print(f"{'#':<3} {'Profile':<35} {'Model ID':<35} {'Size':<8} {'Status'}")
+    print("-" * 95)
 
-        print(f"{i:2d}. {profile_name:<35} {model_id:<45} {status}")
-    print("=" * 80)
+    for i, (profile_name, model_id) in enumerate(models, 1):
+        status, size = check_download_status(model_id)
+        print(f"{i:2d}. {profile_name:<35} {model_id:<35} {size:<8} {status}")
+    print("=" * 95)
 
 def main():
     parser = argparse.ArgumentParser(
