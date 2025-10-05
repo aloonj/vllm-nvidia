@@ -60,7 +60,6 @@ def detect_gpu_count():
         )
         gpu_count = len(result.stdout.strip().split('\n'))
         if gpu_count > 0:
-            print(f"Detected {gpu_count} GPU(s) via nvidia-smi")
             return gpu_count
     except (subprocess.CalledProcessError, FileNotFoundError):
         pass
@@ -71,7 +70,6 @@ def detect_gpu_count():
         if torch.cuda.is_available():
             gpu_count = torch.cuda.device_count()
             if gpu_count > 0:
-                print(f"Detected {gpu_count} GPU(s) via PyTorch")
                 return gpu_count
     except ImportError:
         pass
