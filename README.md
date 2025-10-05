@@ -1,4 +1,4 @@
-# vLLM NVIDIA Server
+# vLLM NVIDIA Wrapper
 
 A Python wrapper around vLLM for running LLM inference on NVIDIA GPUs. Includes an interactive menu for selecting models, automatic GPU detection, and YAML-based configuration profiles.
 
