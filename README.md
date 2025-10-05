@@ -153,6 +153,8 @@ See `profiles/README.md` for detailed documentation.
 
 ## vRAM Estimation Tool
 
+![vRAM Estimator](docs/estimator.png)
+
 The included `estimate_vram.py` tool helps predict memory requirements before downloading models:
 
 ```bash
