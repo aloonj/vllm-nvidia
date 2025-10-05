@@ -15,8 +15,9 @@ from typing import Optional, List
 import time
 
 try:
-    from huggingface_hub import snapshot_download, hf_hub_download
+    from huggingface_hub import snapshot_download, hf_hub_download, list_repo_files
     from huggingface_hub.utils import RepositoryNotFoundError, GatedRepoError
+    import fnmatch
 except ImportError:
     print("Error: huggingface_hub not installed. Install with:")
     print("pip install huggingface_hub")
@@ -44,6 +45,38 @@ def get_profile_models(profiles_dir: str = "profiles") -> List[tuple]:
 
     return models
 
+def get_optimal_download_patterns(model_id: str, token: Optional[str] = None) -> List[str]:
+    """Get optimal download patterns using vLLM's logic to avoid duplicates."""
+    try:
+        # Get file list from HuggingFace repo
+        files = list_repo_files(repo_id=model_id, token=token)
+
+        # vLLM's pattern priority order (safetensors first)
+        weight_patterns = ["*.safetensors", "*.bin"]
+        config_patterns = ["*.json", "*.txt", "*.py"]
+
+        # Use vLLM's logic: first pattern that matches wins
+        selected_weight_pattern = None
+        for pattern in weight_patterns:
+            matching = fnmatch.filter(files, pattern)
+            if len(matching) > 0:
+                selected_weight_pattern = pattern
+                format_name = "safetensors" if pattern == "*.safetensors" else "PyTorch bin"
+                print(f"🎯 Using {format_name} format ({len(matching)} files)")
+                break
+
+        # Combine selected weight pattern with config patterns
+        if selected_weight_pattern:
+            return [selected_weight_pattern] + config_patterns
+        else:
+            print("⚠️ No standard weight files found, including all patterns")
+            return weight_patterns + config_patterns
+
+    except Exception as e:
+        print(f"⚠️ Could not detect optimal patterns for {model_id}: {e}")
+        # Fallback to safetensors only (vLLM default)
+        return ["*.safetensors", "*.json", "*.txt", "*.py"]
+
 def download_model(model_id: str, force: bool = False, token: Optional[str] = None) -> bool:
     """Download a model from HuggingFace."""
     print(f"\n🔄 Downloading {model_id}...")
@@ -63,13 +96,16 @@ def download_model(model_id: str, force: bool = False, token: Optional[str] = No
             if cache_dir.exists():
                 print(f"🔄 Force re-downloading {model_id}...")
 
+        # Get optimal download patterns using vLLM's logic
+        allow_patterns = get_optimal_download_patterns(model_id, token)
+
         # Download with progress
         start_time = time.time()
 
         downloaded_path = snapshot_download(
             repo_id=model_id,
             token=token,
-            allow_patterns=["*.safetensors", "*.bin", "*.json", "*.txt", "*.py"],  # Skip unnecessary files
+            allow_patterns=allow_patterns,
             ignore_patterns=["*.md", "*.git*", "*.DS_Store"],
         )
 
