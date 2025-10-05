@@ -117,6 +117,9 @@ source /path/to/vllm-nvidia/activate_vllm.sh
 
 The server is OpenAI-compatible. Start with:
 ```bash
+# Activate environment first
+source activate_vllm.sh
+
 # Interactive menu
 python api_server.py
 
@@ -158,6 +161,9 @@ See `profiles/README.md` for detailed documentation.
 The included `estimate_vram.py` tool helps predict memory requirements before downloading models:
 
 ```bash
+# Activate environment first
+source activate_vllm.sh
+
 # Analyze all model profiles
 python estimate_vram.py
 
@@ -188,6 +194,9 @@ The tool:
 For models that vLLM thinks won't fit but you want to try anyway:
 
 ```bash
+# Activate environment first
+source activate_vllm.sh
+
 # List models and their download status
 python predownload.py --list
 
